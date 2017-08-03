@@ -14,9 +14,9 @@
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hey there! Tell us more about your experience with this interactive display so that we can improve in the future"
-            android:textSize="28sp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp"
+            android:text="Hey there! Tell us more about your experience with this interactive display so that we can improve in the future."
+            android:textSize="28sp" />
         <TextView
         android:id="@+id/textView6"
         android:layout_width="match_parent"
@@ -38,8 +38,8 @@
                 android:id="@+id/button5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Admin login"
-                android:onClick="login"/>
+                android:onClick="login"
+                android:text="Admin login" />
 
             <Space
                 android:layout_width="0dp"
