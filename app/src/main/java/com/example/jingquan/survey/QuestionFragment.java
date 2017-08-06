@@ -1,6 +1,8 @@
 package com.example.jingquan.survey;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -116,7 +119,6 @@ public class QuestionFragment extends Fragment {
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             rv.setLayoutManager(llm);
             rv.setAdapter(new QuestionAdapter());
-
             return v;
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,6 +130,21 @@ public class QuestionFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater mi) {
         mi.inflate(R.menu.menubar, menu);
         super.onCreateOptionsMenu(menu, mi);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem mi) {
+        switch (mi.getItemId()) {
+            case R.id.submit:
+                EndFragment ef = new EndFragment();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.setCustomAnimations(R.animator.enter_right, R.animator.exit_left);
+                ft.replace(R.id.main, ef);
+                ft.commit();
+                return true;
+            default:
+                return super.onOptionsItemSelected(mi);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
