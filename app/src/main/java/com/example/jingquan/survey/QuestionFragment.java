@@ -135,6 +135,7 @@ public class QuestionFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem mi) {
         switch (mi.getItemId()) {
             case R.id.submit:
+                // TODO: perform all the checks, save to database and blah blah blah over here
                 EndFragment ef = new EndFragment();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
