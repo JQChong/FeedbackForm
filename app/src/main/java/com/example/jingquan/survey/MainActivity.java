@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void nextButton(View view) {
-        LSQFragment qf = new LSQFragment();
+        QuestionFragment qf = new QuestionFragment();
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.animator.enter_right, R.animator.exit_left);

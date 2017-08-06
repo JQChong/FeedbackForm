@@ -35,13 +35,11 @@ import java.util.TreeMap;
 
 public class LSQViewFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
-
     public static ArrayList<String> lsqList = new ArrayList<>();
-
     public Manager manager;
     public Database db;
     public Document doc;
+    private OnFragmentInteractionListener mListener;
 
     public LSQViewFragment() {
     }
@@ -62,7 +60,7 @@ public class LSQViewFragment extends Fragment {
         lsqList.clear();
         try {
             manager = new Manager(new AndroidContext(getActivity()), Manager.DEFAULT_OPTIONS);
-            db = manager.getExistingDatabase("questions_lists6");
+            db = manager.getExistingDatabase("questions_lists7");
             doc = db.getExistingDocument("1234567890");
             final Map<String, Object> questionMap = doc.getProperties();
             ArrayList<Question> aq = new ArrayList<>();
@@ -195,14 +193,14 @@ public class LSQViewFragment extends Fragment {
         mListener = null;
     }
 
-    private interface OnFragmentInteractionListener {
-    }
-
     public int nthIndexOf(String str, char ch, int n) {
         int pos = str.indexOf(ch);
         while (--n > 0 && pos != -1)
             pos = str.indexOf(ch, pos + 1);
         return pos;
+    }
+
+    private interface OnFragmentInteractionListener {
     }
 
     private class Adapter extends BaseAdapter {

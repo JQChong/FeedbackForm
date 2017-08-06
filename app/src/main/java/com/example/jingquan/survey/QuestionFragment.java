@@ -1,25 +1,16 @@
 package com.example.jingquan.survey;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.util.Log;
-import android.util.TypedValue;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextSwitcher;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
@@ -29,45 +20,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
-
-import static com.example.jingquan.survey.FRQFragment.frqList;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LSQFragment.OnFragmentInteractionListener} interface
+ * {@link QuestionFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link LSQFragment#newInstance} factory method to
+ * Use the {@link QuestionFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LSQFragment extends Fragment {
+public class QuestionFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    public static ArrayList<String> likertList = new ArrayList<>();
+    public static ArrayList<String> likertResponse = new ArrayList<>();
+    public static ArrayList<Question> aq;
+    int ratecount = 0;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
-    public static ArrayList<String> likertList = new ArrayList<>();
-    public static ArrayList<String> likertResponse = new ArrayList<>();
-    private int currentIndex = 0;
-
-    public LSQFragment() {
+    public QuestionFragment() {
         // Required empty public constructor
     }
 
@@ -77,11 +59,11 @@ public class LSQFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LSQFragment.
+     * @return A new instance of fragment QuestionFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static LSQFragment newInstance(String param1, String param2) {
-        LSQFragment fragment = new LSQFragment();
+    public static QuestionFragment newInstance(String param1, String param2) {
+        QuestionFragment fragment = new QuestionFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -102,19 +84,23 @@ public class LSQFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_question, container, false);
+        setHasOptionsMenu(true);
         try {
             likertList.clear();
             Manager manager = new Manager(new AndroidContext(getActivity()), Manager.DEFAULT_OPTIONS);
-            Database db = manager.getExistingDatabase("questions_lists6");
+            Database db = manager.getExistingDatabase("questions_lists7");
             Document doc = db.getExistingDocument("1234567890");
             final Map<String, Object> questionMap = doc.getProperties();
-            ArrayList<Question> aq = new ArrayList<>();
+            aq = new ArrayList<>();
             for (String key : questionMap.keySet()) {
-                if (key.contains("LSQ")) {
+                if (key.contains("Q")) {
                     ObjectMapper om = new ObjectMapper();
-                    JSONObject json = new JSONObject((LinkedHashMap)questionMap.get(key));
+                    JSONObject json = new JSONObject((LinkedHashMap) questionMap.get(key));
                     Question qn = om.readValue(json.toString(), Question.class);
                     aq.add(qn);
+                }
+                if (key.contains("LSQ")) {
+                    ratecount++;
                 }
             }
             Collections.sort(aq, new Comparator<Question>() {
@@ -123,75 +109,25 @@ public class LSQFragment extends Fragment {
                     return o1.getqNumber() - o2.getqNumber();
                 }
             });
-            for(Question q: aq){
+            for (Question q : aq) {
                 likertList.add(q.getStatement());
             }
-            Button b1 = (Button) v.findViewById(R.id.button3);
-            final TextSwitcher ts1 = (TextSwitcher) v.findViewById(R.id.ts1);
-            final TextSwitcher ts2 = (TextSwitcher) v.findViewById(R.id.ts2);
-            ts1.setFactory(new ViewSwitcher.ViewFactory() {
-                @Override
-                public View makeView() {
-                    TextView tv = new TextView(getActivity());
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 28);
-                    return tv;
-                }
-            });
-            ts2.setFactory(new ViewSwitcher.ViewFactory() {
-                @Override
-                public View makeView() {
-                    TextView tv = new TextView(getActivity());
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-                    return tv;
-                }
-            });
+            RecyclerView rv = (RecyclerView) v.findViewById(R.id.my_recycler_view);
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            rv.setLayoutManager(llm);
+            rv.setAdapter(new QuestionAdapter());
 
-            ts1.setCurrentText("Question 1/" + (questionMap.size()-2));
-            ts2.setCurrentText(likertList.get(0));
-
-            Animation in = AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_in_left);
-            Animation out = AnimationUtils.loadAnimation(getActivity(), android.R.anim.slide_out_right);
-
-            ts1.setInAnimation(in);
-            ts2.setInAnimation(in);
-            ts1.setOutAnimation(out);
-            ts2.setOutAnimation(out);
-
-            final RadioGroup rg = (RadioGroup) v.findViewById(R.id.rg);
-            for (int i = 0; i < rg.getChildCount(); i++) {
-                rg.getChildAt(i).setId(i);
-            }
-
-            b1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int selection;
-                    if ((selection=rg.getCheckedRadioButtonId()) != -1) {
-                        currentIndex++;
-                        likertResponse.add(((RadioButton)rg.getChildAt(selection)).getText().toString());
-                        if (currentIndex == likertList.size()) {
-                            FRQFragment qf = new FRQFragment();
-                            FragmentManager fm = getFragmentManager();
-                            FragmentTransaction ft = fm.beginTransaction();
-                            ft.setCustomAnimations(R.animator.enter_right, R.animator.exit_left);
-                            ft.replace(R.id.main, qf);
-                            ft.commit();
-                        } else {
-                            ts1.setText("Question " + (currentIndex + 1) + "/" + (questionMap.size()-2));
-                            ts2.setText(likertList.get(currentIndex));
-                        }
-                        rg.clearCheck();
-                    } else {
-                        Toast.makeText(getActivity(), "This is a required question", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
             return v;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater mi) {
+        mi.inflate(R.menu.menubar, menu);
+        super.onCreateOptionsMenu(menu, mi);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -231,5 +167,49 @@ public class LSQFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class QuestionAdapter extends RecyclerView.Adapter {
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view;
+            RecyclerView.ViewHolder vh = null;
+            switch (viewType) {
+                case 0:
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ratingcard, parent, false);
+                    vh = new RatingHolder(view);
+                    break;
+                case 1:
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frqcard, parent, false);
+                    vh = new FRQHolder(view);
+                    break;
+            }
+            return vh;
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            int type = holder.getItemViewType();
+            switch (type) {
+                case 0:
+                    RatingHolder rh = (RatingHolder) holder;
+                    rh.getTv().setText(aq.get(position).getStatement());
+                    break;
+                case 1:
+                    FRQHolder fh = (FRQHolder) holder;
+                    fh.getTv().setText(aq.get(position).getStatement());
+                    break;
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return aq.size();
+        }
+
+        public int getItemViewType(int position) {
+            return position < ratecount ? 0 : 1;
+        }
     }
 }
