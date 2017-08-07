@@ -3,13 +3,11 @@ package com.example.jingquan.survey;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.app.LoaderManager.LoaderCallbacks;
-
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.AsyncTask;
-
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -93,9 +91,9 @@ public class AdminLoginActivity extends AppCompatActivity implements LoaderCallb
         View focusView = null;
 
         // PASSWORD IS A MUST HAVE!!!
-        if(TextUtils.isEmpty(password)){
-            mUsernameView.setError(getString(R.string.error_field_required));
-            focusView = mUsernameView;
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_field_required));
+            focusView = mPasswordView;
             cancel = true;
         }
 
@@ -106,9 +104,27 @@ public class AdminLoginActivity extends AppCompatActivity implements LoaderCallb
             cancel = true;
         }
 
+        for (String credential : ONLY_CREDENTIALS) {
+            String[] pieces = credential.split(":");
+            if (pieces[0].equals(username)) {
+                if (!pieces[1].equals(password)) {
+                    focusView = mPasswordView;
+                    cancel = true;
+                }
+            } else {
+                focusView = mUsernameView;
+                cancel = true;
+            }
+        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
+            if (focusView.equals(mUsernameView)) {
+                mUsernameView.setError("This account does not exist.");
+            } else if (focusView.equals(mPasswordView)) {
+                mPasswordView.setError("The password is incorrect.");
+            }
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
@@ -180,7 +196,7 @@ public class AdminLoginActivity extends AppCompatActivity implements LoaderCallb
         protected Boolean doInBackground(Void... params) {
             try {
                 Random r = new Random();
-                int t = r.nextInt(1000)+1500;
+                int t = r.nextInt(1000) + 1500;
                 Thread.sleep(t);
             } catch (InterruptedException e) {
                 return false;
@@ -193,7 +209,7 @@ public class AdminLoginActivity extends AppCompatActivity implements LoaderCallb
                     return pieces[1].equals(mPassword);
                 }
             }
-            return true;
+            return false;
         }
 
         @Override

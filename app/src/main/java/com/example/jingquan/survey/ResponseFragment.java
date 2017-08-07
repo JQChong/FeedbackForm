@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ListAdapter;
 import android.widget.SimpleExpandableListAdapter;
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -28,8 +27,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -37,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 
 /**
@@ -102,7 +98,7 @@ public class ResponseFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_response, container, false);
         try {
             Manager manager = new Manager(new AndroidContext(getActivity()), Manager.DEFAULT_OPTIONS);
-            final Database db = manager.getExistingDatabase("survey_responses4");
+            final Database db = manager.getExistingDatabase("survey_responses5");
             Query q = db.createAllDocumentsQuery();
             QueryEnumerator qe = q.run();
             ArrayList<Question> aq = new ArrayList<>();

@@ -14,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.RatingBar;
 
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
@@ -26,6 +28,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,9 +46,13 @@ public class QuestionFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    public static ArrayList<String> likertList = new ArrayList<>();
-    public static ArrayList<String> likertResponse = new ArrayList<>();
+    public static ArrayList<String> questionsList = new ArrayList<>();
+    public static ArrayList<String> response = new ArrayList<>();
     public static ArrayList<Question> aq;
+
+    public ArrayList<RatingBar> rb = new ArrayList<>();
+    public ArrayList<EditText> et = new ArrayList<>();
+
     int ratecount = 0;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -89,7 +96,7 @@ public class QuestionFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_question, container, false);
         setHasOptionsMenu(true);
         try {
-            likertList.clear();
+            questionsList.clear();
             Manager manager = new Manager(new AndroidContext(getActivity()), Manager.DEFAULT_OPTIONS);
             Database db = manager.getExistingDatabase("questions_lists7");
             Document doc = db.getExistingDocument("1234567890");
@@ -113,7 +120,7 @@ public class QuestionFragment extends Fragment {
                 }
             });
             for (Question q : aq) {
-                likertList.add(q.getStatement());
+                questionsList.add(q.getStatement());
             }
             RecyclerView rv = (RecyclerView) v.findViewById(R.id.my_recycler_view);
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
@@ -135,7 +142,27 @@ public class QuestionFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem mi) {
         switch (mi.getItemId()) {
             case R.id.submit:
-                // TODO: perform all the checks, save to database and blah blah blah over here
+                ArrayList<String> res = new ArrayList<>();
+                Map<String, Object> mapRes = new HashMap<>();
+                for (int i = 0; i < rb.size(); i++) {
+                    res.add(rb.get(i).getNumStars() + "");
+                }
+                for (int j = 0; j < et.size(); j++) {
+                    res.add(et.get(j).getText().toString());
+                }
+                for (int k = 0; k < res.size(); k++) {
+                    Question qn = aq.get(k);
+                    mapRes.put("Q-" + (k + 1), new Question(qn.getqNumber(), qn.getqType(), qn.getStatement(), res.get(k)));
+                }
+                System.out.print(mapRes.size());
+                try {
+                    Manager m = new Manager(new AndroidContext(getActivity()), Manager.DEFAULT_OPTIONS);
+                    Database db = m.getExistingDatabase("survey_responses5");
+                    Document doc = db.getDocument("res-" + System.currentTimeMillis());
+                    doc.putProperties(mapRes);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 EndFragment ef = new EndFragment();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
@@ -197,10 +224,12 @@ public class QuestionFragment extends Fragment {
                 case 0:
                     view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ratingcard, parent, false);
                     vh = new RatingHolder(view);
+                    rb.add((RatingBar) view.findViewById(R.id.ratingBar));
                     break;
                 case 1:
                     view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frqcard, parent, false);
                     vh = new FRQHolder(view);
+                    et.add((EditText) view.findViewById(R.id.edit2));
                     break;
             }
             return vh;

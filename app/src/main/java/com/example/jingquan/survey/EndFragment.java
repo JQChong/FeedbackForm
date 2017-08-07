@@ -1,9 +1,11 @@
 package com.example.jingquan.survey;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +73,18 @@ public class EndFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 System.exit(0);
+            }
+        });
+        Button h = (Button) v.findViewById(R.id.button3);
+        h.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirstFragment ff = new FirstFragment();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.setCustomAnimations(R.animator.enter_right, R.animator.exit_left);
+                ft.replace(R.id.main, ff);
+                ft.commit();
             }
         });
         return v;
