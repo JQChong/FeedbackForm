@@ -193,13 +193,6 @@ public class LSQViewFragment extends Fragment {
         mListener = null;
     }
 
-    public int nthIndexOf(String str, char ch, int n) {
-        int pos = str.indexOf(ch);
-        while (--n > 0 && pos != -1)
-            pos = str.indexOf(ch, pos + 1);
-        return pos;
-    }
-
     private interface OnFragmentInteractionListener {
     }
 

@@ -188,13 +188,6 @@ public class FRQViewFragment extends Fragment {
         return v;
     }
 
-    public int nthIndexOf(String str, char ch, int n) {
-        int pos = str.indexOf(ch);
-        while (--n > 0 && pos != -1)
-            pos = str.indexOf(ch, pos + 1);
-        return pos;
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
