@@ -1,7 +1,9 @@
 package com.example.jingquan.survey;
 
 import android.app.Fragment;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.Toast;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -101,7 +104,7 @@ public class ResponseFragment extends Fragment {
             final Database db = manager.getExistingDatabase("survey_responses5");
             Query q = db.createAllDocumentsQuery();
             QueryEnumerator qe = q.run();
-            ArrayList<Question> aq = new ArrayList<>();
+            final ArrayList<Question> aq = new ArrayList<>();
             for (Iterator<QueryRow> iqr = qe; iqr.hasNext(); ) {
                 QueryRow qr = iqr.next();
                 Document doc = qr.getDocument();
@@ -173,16 +176,41 @@ public class ResponseFragment extends Fragment {
             clear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    elv.setAdapter((BaseExpandableListAdapter)null);
+                    elv.setAdapter((BaseExpandableListAdapter) null);
                     try {
                         QueryEnumerator qe = db.createAllDocumentsQuery().run();
-                        for(Iterator<QueryRow> iqr = qe; iqr.hasNext();){
+                        for (Iterator<QueryRow> iqr = qe; iqr.hasNext(); ) {
                             QueryRow qr = iqr.next();
                             Document doc = qr.getDocument();
                             doc.delete();
                         }
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
+                    }
+                }
+            });
+
+            Button email = (Button) v.findViewById(R.id.button4);
+            email.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent in = new Intent(Intent.ACTION_SEND);
+                    in.setType("message/rfc822");
+                    in.putExtra(Intent.EXTRA_EMAIL, new String[]{"appventure@nushigh.edu.sg"}); //TEMPORARY
+                    in.putExtra(Intent.EXTRA_SUBJECT, "Appventure Feedback Responses");
+                    String s = "";
+                    for (int i = 0; i < aq.size(); i++) {
+                        Question q = aq.get(i);
+                        s += q.getqNumber() + " " + q.getStatement() + ": " + q.getResponse() + "\n";
+                        if (i % 4 == 3) {
+                            s += "\n";
+                        }
+                    }
+                    in.putExtra(Intent.EXTRA_TEXT, s);
+                    try {
+                        startActivity(Intent.createChooser(in, "Send responses"));
+                    } catch (ActivityNotFoundException ex) {
+                        Toast.makeText(getActivity(), "No email clients available", Toast.LENGTH_LONG).show();
                     }
                 }
             });

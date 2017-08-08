@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.jingquan.survey.LSQViewFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.example.jingquan.survey.LSQViewFragment">
 
     <TextView
         android:layout_width="match_parent"
@@ -19,18 +19,24 @@
         android:id="@+id/list_res"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
+        android:layout_marginStart="64dp"
         android:layout_weight="1"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
+        android:layout_marginEnd="64dp"
         android:layout_marginStart="64dp"
-        android:layout_marginEnd="64dp">
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email" />
 
         <Space
             android:layout_width="0dp"

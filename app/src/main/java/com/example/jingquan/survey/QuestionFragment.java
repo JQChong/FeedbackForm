@@ -145,7 +145,7 @@ public class QuestionFragment extends Fragment {
                 ArrayList<String> res = new ArrayList<>();
                 Map<String, Object> mapRes = new HashMap<>();
                 for (int i = 0; i < rb.size(); i++) {
-                    res.add(rb.get(i).getNumStars() + "");
+                    res.add(rb.get(i).getRating() + "");
                 }
                 for (int j = 0; j < et.size(); j++) {
                     res.add(et.get(j).getText().toString());
