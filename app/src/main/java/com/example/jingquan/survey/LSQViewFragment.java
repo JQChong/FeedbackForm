@@ -41,8 +41,7 @@ public class LSQViewFragment extends Fragment {
     public Document doc;
     private OnFragmentInteractionListener mListener;
 
-    public LSQViewFragment() {
-    }
+    public LSQViewFragment() {}
 
     public static LSQViewFragment newInstance() {
         return new LSQViewFragment();
@@ -121,7 +120,7 @@ public class LSQViewFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 try {
-                                    if (number.getText().toString().length() == 0) {
+                                    if (number.getText().toString().isEmpty()) {
                                         number.setError("This field is required.");
                                         number.requestFocus();
                                         return;

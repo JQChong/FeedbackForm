@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,7 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.RatingBar;
+import android.widget.SeekBar;
 
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
@@ -31,7 +34,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +52,7 @@ public class QuestionFragment extends Fragment {
     public static ArrayList<String> response = new ArrayList<>();
     public static ArrayList<Question> aq;
 
-    public ArrayList<RatingBar> rb = new ArrayList<>();
+    public ArrayList<Pair<SeekBar, EditText>> sb = new ArrayList<>();
     public ArrayList<EditText> et = new ArrayList<>();
 
     int ratecount = 0;
@@ -144,8 +146,8 @@ public class QuestionFragment extends Fragment {
             case R.id.submit:
                 ArrayList<String> res = new ArrayList<>();
                 Map<String, Object> mapRes = new HashMap<>();
-                for (int i = 0; i < rb.size(); i++) {
-                    res.add(rb.get(i).getRating() + "");
+                for (int i = 0; i < sb.size(); i++) {
+                    res.add(sb.get(i).first.getProgress() * 0.5 + "");
                 }
                 for (int j = 0; j < et.size(); j++) {
                     res.add(et.get(j).getText().toString());
@@ -224,7 +226,24 @@ public class QuestionFragment extends Fragment {
                 case 0:
                     view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ratingcard, parent, false);
                     vh = new RatingHolder(view);
-                    rb.add((RatingBar) view.findViewById(R.id.ratingBar));
+                    final Pair<SeekBar, EditText> pr = new Pair<>((SeekBar) view.findViewById(R.id.seekBar), (EditText) view.findViewById(R.id.seekBarEdit));
+                    pr.first.setMax(10);
+                    pr.first.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {if (fromUser) pr.second.setText(progress * 0.5 + "");}
+                        @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+                        @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+                    });
+                    pr.second.addTextChangedListener(new TextWatcher() {
+                        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                        @Override public void afterTextChanged(Editable s) {
+                            try {
+                                if (s.toString().equals(Math.round(Double.parseDouble(s.toString()) * 2) * 0.5 + "")) pr.first.setProgress((int) Math.round(Double.parseDouble(s.toString()) * 2));
+                                else pr.second.setText(Math.round(Double.parseDouble(s.toString()) * 2) * 0.5 + "");
+                            } catch (NumberFormatException ex) {}
+                        }
+                    });
+                    sb.add(pr);
                     break;
                 case 1:
                     view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frqcard, parent, false);

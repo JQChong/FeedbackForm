@@ -41,7 +41,8 @@
         <activity
             android:name=".AdminLoginActivity"
             android:label="@string/title_activity_admin_login"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.jingquan.survey.MainActivity" />
@@ -49,7 +50,8 @@
         <activity
             android:name=".AdminActivity"
             android:label="@string/title_activity_admin"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.jingquan.survey.MainActivity" />

@@ -2,7 +2,9 @@ package com.example.jingquan.survey;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
@@ -12,12 +14,14 @@ import android.widget.TextView;
 public class RatingHolder extends RecyclerView.ViewHolder {
 
     private TextView tv;
-    private RatingBar rb;
+    private SeekBar sb;
+    private EditText et;
 
     public RatingHolder(View v) {
         super(v);
         this.tv = (TextView) v.findViewById(R.id.rating);
-        this.rb = (RatingBar) v.findViewById(R.id.ratingBar);
+        this.sb = (SeekBar) v.findViewById(R.id.seekBar);
+        this.et = (EditText) v.findViewById(R.id.seekBarEdit);
     }
 
     public TextView getTv() {
@@ -28,11 +32,19 @@ public class RatingHolder extends RecyclerView.ViewHolder {
         this.tv = tv;
     }
 
-    public RatingBar getRb() {
-        return rb;
+    public SeekBar getSb() {
+        return sb;
     }
 
-    public void setRb(RatingBar rb) {
-        this.rb = rb;
+    public void setSb(SeekBar sb) {
+        this.sb = sb;
+    }
+
+    public EditText getEt() {
+        return et;
+    }
+
+    public void setEt(EditText et) {
+        this.et = et;
     }
 }
