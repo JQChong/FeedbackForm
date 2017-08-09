@@ -103,7 +103,7 @@ public class QuestionFragment extends Fragment {
         try {
             questionsList.clear();
             Manager manager = new Manager(new AndroidContext(getActivity()), Manager.DEFAULT_OPTIONS);
-            Database db = manager.getExistingDatabase("questions_lists7");
+            Database db = manager.getExistingDatabase("questions_lists8");
             Document doc = db.getExistingDocument("1234567890");
             final Map<String, Object> questionMap = doc.getProperties();
             aq = new ArrayList<>();
@@ -299,7 +299,7 @@ public class QuestionFragment extends Fragment {
         public int getItemViewType(int position) {
             if (position == 0) {
                 return 0;
-            } else if (position == 1) {
+            } else if (questionsList.get(position).equals("Name your favourite functionality.")) {
                 return 1;
             } else {
                 return 2;

@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         }
         try {
             Manager manager = new Manager(new AndroidContext(this), Manager.DEFAULT_OPTIONS);
-            if (manager.getExistingDatabase("questions_lists7") == null) {
-                Database db = manager.getDatabase("questions_lists7");
+            if (manager.getExistingDatabase("questions_lists8") == null) {
+                Database db = manager.getDatabase("questions_lists8");
                 Map<String, Object> questionList = new HashMap<>();
                 InputStream is = getAssets().open("LikertScale.txt");
                 BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
                 Document doc = db.getDocument("1234567890");
                 doc.putProperties(questionList);
             }
-            if (manager.getExistingDatabase("survey_responses5") == null) {
-                manager.getDatabase("survey_responses5");
+            if (manager.getExistingDatabase("survey_responses6") == null) {
+                manager.getDatabase("survey_responses6");
             }
         } catch (Exception e) {
             e.printStackTrace();

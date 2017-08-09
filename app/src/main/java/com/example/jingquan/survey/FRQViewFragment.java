@@ -71,7 +71,7 @@ public class FRQViewFragment extends Fragment {
         frqs.clear();
         try {
             manager = new Manager(new AndroidContext(getActivity()), Manager.DEFAULT_OPTIONS);
-            db = manager.getExistingDatabase("questions_lists7");
+            db = manager.getExistingDatabase("questions_lists8");
             doc = db.getExistingDocument("1234567890");
             final Map<String, Object> questionMap = doc.getProperties();
             ArrayList<Question> aq = new ArrayList<>();
