@@ -1,13 +1,16 @@
 package com.example.jingquan.survey;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 
 import com.couchbase.lite.Database;
@@ -47,11 +52,11 @@ public class QuestionFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static ArrayList<String> questionsList = new ArrayList<>();
-    public static ArrayList<String> response = new ArrayList<>();
     public static ArrayList<Question> aq;
 
     public ArrayList<RatingBar> rb = new ArrayList<>();
     public ArrayList<EditText> et = new ArrayList<>();
+    public ArrayList<RadioGroup> rg = new ArrayList<>();
 
     int ratecount = 0;
     // TODO: Rename and change types of parameters
@@ -123,7 +128,7 @@ public class QuestionFragment extends Fragment {
                 questionsList.add(q.getStatement());
             }
             RecyclerView rv = (RecyclerView) v.findViewById(R.id.my_recycler_view);
-            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+            StaggeredGridLayoutManager llm = new StaggeredGridLayoutManager(2, 1);
             rv.setLayoutManager(llm);
             rv.setAdapter(new QuestionAdapter());
             return v;
@@ -147,6 +152,29 @@ public class QuestionFragment extends Fragment {
                 for (int i = 0; i < rb.size(); i++) {
                     res.add(rb.get(i).getRating() + "");
                 }
+                for (int i = 0; i < rg.size(); i++) {
+                    int id = rg.get(i).getCheckedRadioButtonId();
+                    if (id != -1) {
+                        View v = rg.get(i).findViewById(id);
+                        int index = rg.get(i).indexOfChild(v);
+                        RadioButton rb = (RadioButton) rg.get(i).getChildAt(index);
+                        res.add((String) rb.getText());
+                    } else {
+                        res.clear();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Error.").setMessage("Please choose a favourite functionality");
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        return false;
+                    }
+                    System.out.println("fasdas");
+                }
                 for (int j = 0; j < et.size(); j++) {
                     res.add(et.get(j).getText().toString());
                 }
@@ -169,6 +197,10 @@ public class QuestionFragment extends Fragment {
                 ft.setCustomAnimations(R.animator.enter_right, R.animator.exit_left);
                 ft.replace(R.id.main, ef);
                 ft.commit();
+                return true;
+            case R.id.adminlogin:
+                Intent intent = new Intent(getActivity(), AdminLoginActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(mi);
@@ -218,7 +250,7 @@ public class QuestionFragment extends Fragment {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view;
+            final View view;
             RecyclerView.ViewHolder vh = null;
             switch (viewType) {
                 case 0:
@@ -227,6 +259,11 @@ public class QuestionFragment extends Fragment {
                     rb.add((RatingBar) view.findViewById(R.id.ratingBar));
                     break;
                 case 1:
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.mcqcard, parent, false);
+                    vh = new MCQHolder(view);
+                    rg.add((RadioGroup) view.findViewById(R.id.rg));
+                    break;
+                case 2:
                     view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frqcard, parent, false);
                     vh = new FRQHolder(view);
                     et.add((EditText) view.findViewById(R.id.edit2));
@@ -244,6 +281,10 @@ public class QuestionFragment extends Fragment {
                     rh.getTv().setText(aq.get(position).getStatement());
                     break;
                 case 1:
+                    MCQHolder mcq = (MCQHolder) holder;
+                    mcq.getTv().setText(aq.get(position).getStatement());
+                    break;
+                case 2:
                     FRQHolder fh = (FRQHolder) holder;
                     fh.getTv().setText(aq.get(position).getStatement());
                     break;
@@ -256,7 +297,13 @@ public class QuestionFragment extends Fragment {
         }
 
         public int getItemViewType(int position) {
-            return position < ratecount ? 0 : 1;
+            if (position == 0) {
+                return 0;
+            } else if (position == 1) {
+                return 1;
+            } else {
+                return 2;
+            }
         }
     }
 }

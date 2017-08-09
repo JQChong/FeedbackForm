@@ -27,7 +27,7 @@ import java.util.Random;
 public class AdminLoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     private static final String[] ONLY_CREDENTIALS = new String[]{
-            "a:s"
+            "ambrosechuathinkofapassword:thisfeedbackappsucks"
     };
 
     private UserLoginTask mAuthTask = null;

@@ -16,10 +16,8 @@ package com.example.jingquan.survey;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
@@ -40,10 +38,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {
-            FirstFragment ff = new FirstFragment();
+            QuestionFragment qf = new QuestionFragment();
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.main, ff);
+            ft.setCustomAnimations(R.animator.enter_right, R.animator.exit_left);
+            ft.replace(R.id.main, qf);
             ft.commit();
         }
         try {
@@ -76,19 +75,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void nextButton(View view) {
-        QuestionFragment qf = new QuestionFragment();
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.animator.enter_right, R.animator.exit_left);
-        ft.replace(R.id.main, qf);
-        ft.commit();
-    }
-
-    public void login(View view) {
-        Intent intent = new Intent(this, AdminLoginActivity.class);
-        startActivity(intent);
     }
 }

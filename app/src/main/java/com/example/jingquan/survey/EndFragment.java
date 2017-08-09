@@ -79,11 +79,11 @@ public class EndFragment extends Fragment {
         h.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirstFragment ff = new FirstFragment();
+                QuestionFragment qf = new QuestionFragment();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.setCustomAnimations(R.animator.enter_right, R.animator.exit_left);
-                ft.replace(R.id.main, ff);
+                ft.replace(R.id.main, qf);
                 ft.commit();
             }
         });

@@ -277,6 +277,7 @@ public class FRQViewFragment extends Fragment {
                                                     Question qn = om.readValue(object.toString(), Question.class);
                                                     if (qn.getStatement().equals(frqs.get(position))) {
                                                         key = ls.get(i);
+                                                        System.out.println(key);
                                                         break;
                                                     }
                                                 }

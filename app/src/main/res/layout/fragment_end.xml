@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Your response has been recorded. Thank you for participating this survey."
+            android:text="Your response has been recorded. Thank you for participating in this survey."
             android:textSize="28sp" />
 
         <Space
@@ -29,7 +29,7 @@
                 android:id="@+id/button3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Home" />
+                android:text="Submit another response" />
 
             <Space
                 android:layout_width="0dp"
