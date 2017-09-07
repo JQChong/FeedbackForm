@@ -185,7 +185,7 @@ public class QuestionFragment extends Fragment {
                 System.out.print(mapRes.size());
                 try {
                     Manager m = new Manager(new AndroidContext(getActivity()), Manager.DEFAULT_OPTIONS);
-                    Database db = m.getExistingDatabase("survey_responses5");
+                    Database db = m.getExistingDatabase("survey_responses6");
                     Document doc = db.getDocument("res-" + System.currentTimeMillis());
                     doc.putProperties(mapRes);
                 } catch (Exception e) {
