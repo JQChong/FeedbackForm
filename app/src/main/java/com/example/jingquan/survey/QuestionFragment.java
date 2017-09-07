@@ -173,7 +173,6 @@ public class QuestionFragment extends Fragment {
                         dialog.show();
                         return false;
                     }
-                    System.out.println("fasdas");
                 }
                 for (int j = 0; j < et.size(); j++) {
                     res.add(et.get(j).getText().toString());

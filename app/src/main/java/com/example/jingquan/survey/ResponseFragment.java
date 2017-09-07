@@ -2,15 +2,17 @@ package com.example.jingquan.survey;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -53,6 +55,9 @@ public class ResponseFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private Map<String, ArrayList<Question>> map = new LinkedHashMap<>();
+    private Set<String> questionList = new LinkedHashSet<>();
 
     private OnFragmentInteractionListener mListener;
 
@@ -101,10 +106,10 @@ public class ResponseFragment extends Fragment {
             final Database db = manager.getExistingDatabase("survey_responses6");
             Query q = db.createAllDocumentsQuery();
             QueryEnumerator qe = q.run();
-            final ArrayList<Question> aq = new ArrayList<>();
             for (Iterator<QueryRow> iqr = qe; iqr.hasNext(); ) {
                 QueryRow qr = iqr.next();
                 Document doc = qr.getDocument();
+                ArrayList<Question> aq = new ArrayList<>();
                 Map<String, Object> mso = doc.getProperties();
                 TreeMap<String, Object> tmso = new TreeMap<>(mso);
                 List<String> ls = new ArrayList<>(tmso.keySet());
@@ -114,6 +119,7 @@ public class ResponseFragment extends Fragment {
                         JSONObject object = new JSONObject((LinkedHashMap) mso.get(k));
                         Question qn = om.readValue(object.toString(), Question.class);
                         aq.add(qn);
+                        questionList.add(qn.getStatement());
                     }
                 }
 
@@ -123,57 +129,57 @@ public class ResponseFragment extends Fragment {
                         return o1.getqNumber() - o2.getqNumber();
                     }
                 });
+
+                map.put(doc.getId(), aq);
             }
-            final ExpandableListView elv = (ExpandableListView) v.findViewById(R.id.list_res);
-            String code = "code";
-            Set<String> temp = new LinkedHashSet<>();
-            for (Question question : aq) {
-                temp.add(question.getStatement());
+
+            final TableLayout tl = (TableLayout) v.findViewById(R.id.response);
+            TableRow tr = new TableRow(getActivity());
+            Object[] questions = questionList.toArray();
+
+            for (Object str : questions) {
+                TextView header = new TextView(getActivity());
+                header.setPadding(0, 10, 50, 10);
+                header.setText(str.toString());
+                header.setTextSize(16);
+                header.setTypeface(null, Typeface.BOLD);
+                tr.addView(header);
             }
-            ArrayList<String> questions = new ArrayList<>(temp);
-            TreeMap<Integer, List<Question>> groupedList = new TreeMap<>();
-            for (Question question : aq) {
-                int qNo = question.getqNumber();
-                if (groupedList.containsKey(qNo)) {
-                    List<Question> lq = groupedList.get(qNo);
-                    lq.add(question);
-                } else {
-                    List<Question> lq = new ArrayList<>();
-                    lq.add(question);
-                    groupedList.put(qNo, lq);
+
+            View headerBorder = new View(getActivity());
+            headerBorder.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 1));
+            headerBorder.setBackgroundColor(Color.rgb(51, 51, 51));
+
+            tl.addView(tr);
+            tl.addView(headerBorder);
+
+            Object[] idList = map.keySet().toArray();
+            for (int i = 0; i < map.size(); i++) {
+                // this is the best workaround I can think of, otherwise the program will complain and throw Illegal State Exception :(
+                View rowBorder = new View(getActivity());
+                rowBorder.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 2));
+                rowBorder.setBackgroundColor(Color.rgb(188, 189, 196));
+
+                TableRow responseRow = new TableRow(getActivity());
+                String key = idList[i].toString();
+                ArrayList<Question> temp = map.get(key);
+                System.out.println(temp.size());
+                for (int j = 0; j < temp.size(); j++) {
+                    TextView res = new TextView(getActivity());
+                    res.setText(temp.get(j).getResponse());
+                    res.setPadding(0, 10, 50, 10);
+                    res.setTextSize(16);
+                    responseRow.addView(res);
                 }
+                tl.addView(responseRow);
+                tl.addView(rowBorder);
             }
-
-            List<List<Question>> llq = new ArrayList<>(groupedList.values());
-
-            List<Map<String, String>> lmss = new ArrayList<>();
-            List<List<Map<String, String>>> llmss = new ArrayList<>();
-            for (int i = 0; i < questions.size(); i++) {
-                Map<String, String> tempMap = new TreeMap<>();
-                lmss.add(tempMap);
-                tempMap.put(code, questions.get(i));
-
-                List<Map<String, String>> tempList = new ArrayList<>();
-                for (int j = 0; j < llq.get(i).size(); j++) {
-                    Map<String, String> tempMap1 = new TreeMap<>();
-                    tempList.add(tempMap1);
-                    tempMap1.put(code, llq.get(i).get(j).getResponse());
-                }
-                llmss.add(tempList);
-            }
-            String[] groupFrom = {code};
-            int[] groupTo = {R.id.heading};
-            String[] childFrom = {code};
-            int[] childTo = {R.id.child_items};
-
-            SimpleExpandableListAdapter sela = new SimpleExpandableListAdapter(getActivity(), lmss, R.layout.response_heading, groupFrom, groupTo, llmss, R.layout.response_content, childFrom, childTo);
-            elv.setAdapter(sela);
 
             Button clear = (Button) v.findViewById(R.id.clear);
             clear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    elv.setAdapter((BaseExpandableListAdapter) null);
+                    tl.removeAllViews();
                     try {
                         QueryEnumerator qe = db.createAllDocumentsQuery().run();
                         for (Iterator<QueryRow> iqr = qe; iqr.hasNext(); ) {
