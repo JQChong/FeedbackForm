@@ -51,14 +51,12 @@ public class ResponseFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    public final int LINE_BREAK_CHAR = 30;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private Map<String, ArrayList<Question>> map = new LinkedHashMap<>();
     private Set<String> questionList = new LinkedHashSet<>();
-
     private OnFragmentInteractionListener mListener;
 
     public ResponseFragment() {
@@ -137,10 +135,14 @@ public class ResponseFragment extends Fragment {
             TableRow tr = new TableRow(getActivity());
             Object[] questions = questionList.toArray();
 
+            int width = getActivity().getResources().getDisplayMetrics().widthPixels;
+
             for (Object str : questions) {
                 TextView header = new TextView(getActivity());
                 header.setPadding(0, 10, 50, 10);
-                header.setText(str.toString());
+                String temp = str.toString();
+                header.setText(temp);
+                header.setMaxWidth(width / 4);
                 header.setTextSize(16);
                 header.setTypeface(null, Typeface.BOLD);
                 tr.addView(header);
@@ -163,10 +165,10 @@ public class ResponseFragment extends Fragment {
                 TableRow responseRow = new TableRow(getActivity());
                 String key = idList[i].toString();
                 ArrayList<Question> temp = map.get(key);
-                System.out.println(temp.size());
                 for (int j = 0; j < temp.size(); j++) {
                     TextView res = new TextView(getActivity());
                     res.setText(temp.get(j).getResponse());
+                    res.setMaxWidth(width / 4);
                     res.setPadding(0, 10, 50, 10);
                     res.setTextSize(16);
                     responseRow.addView(res);
